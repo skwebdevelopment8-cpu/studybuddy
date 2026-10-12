@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0c0e14">
+<title>StudyBuddy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<style>
+:root{--bg:#0c0e14;--panel:#11141c;--raise:#171b26;--line:#232838;--text:#e9e7f1;--mute:#8d93a8;--gold:#e8b04b;--gold2:#f3c872;--teal:#5fd0c3;--bad:#ff7a7a;--r:14px;--f:'Instrument Sans',system-ui,sans-serif;--s:'Fraunces',Georgia,serif}
+*{box-sizing:border-box}html,body{height:100%;margin:0}
+body{background:radial-gradient(900px 500px at 70% -10%,#1a1f33 0,transparent 60%),var(--bg);color:var(--text);font:15px/1.6 var(--f);display:flex;overflow:hidden;-webkit-font-smoothing:antialiased}
+button,select,input,textarea{font:inherit;color:inherit}button{cursor:pointer;background:none;border:0}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+aside{width:272px;background:var(--panel);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:16px 12px;gap:12px;flex-shrink:0;transition:transform .25s}
+.logo{font:600 24px var(--s);letter-spacing:-.01em;padding:4px 8px;display:flex;align-items:center;gap:10px}
+.logo i{width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,var(--gold2),#c9822b);display:grid;place-items:center;color:#1a1204;font:600 15px var(--s);font-style:normal}
+.new{background:linear-gradient(135deg,var(--gold2),var(--gold));color:#1a1204;font-weight:600;border-radius:11px;padding:10px;transition:filter .2s}.new:hover{filter:brightness(1.08)}
+#list{flex:1;overflow:auto;display:flex;flex-direction:column;gap:2px}
+.it{display:flex;align-items:center;gap:6px;padding:9px 10px;border-radius:10px;color:var(--mute);cursor:pointer}
+.it span{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.it:hover{background:var(--raise);color:var(--text)}.it.on{background:var(--raise);color:var(--text);box-shadow:inset 2px 0 var(--gold)}
+.it button{opacity:0;color:var(--mute);padding:0 4px}.it:hover button{opacity:1}.it button:hover{color:var(--bad)}
+.foot{font-size:12px;color:var(--mute);padding:4px 8px}
+main{flex:1;display:flex;flex-direction:column;min-width:0;height:100%}
+header{display:flex;gap:8px;align-items:center;padding:12px 18px;border-bottom:1px solid var(--line);background:#0c0e14cc;backdrop-filter:blur(10px);flex-wrap:wrap}
+.menu{display:none;font-size:20px;padding:4px 8px}
+.sel{background:var(--raise);border:1px solid var(--line);border-radius:10px;padding:7px 10px;min-width:0;max-width:240px;color:var(--text)}
+.sel:hover{border-color:#343b52}.grow{flex:1}
+.ibtn{border:1px solid var(--line);background:var(--raise);border-radius:10px;padding:7px 11px;color:var(--mute);transition:.2s}.ibtn:hover,.ibtn.on{color:var(--gold2);border-color:#4a3d1f}
+#custom{display:none}
+#msgs{flex:1;overflow:auto;padding:26px 18px 12px;scroll-behavior:smooth}
+.wrap{max-width:780px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+.hero{text-align:left;padding:9vh 0 0}.hero h1{font:500 clamp(30px,5vw,46px)/1.1 var(--s);margin:0 0 10px;letter-spacing:-.02em}.hero p{color:var(--mute);margin:0 0 22px;max-width:46ch}
+.starts{display:flex;flex-wrap:wrap;gap:8px}.starts button{border:1px solid var(--line);background:var(--panel);padding:9px 14px;border-radius:999px;color:var(--text);transition:.2s}.starts button:hover{border-color:var(--gold);color:var(--gold2)}
+.m{display:flex;gap:12px}.m .av{width:30px;height:30px;border-radius:9px;flex-shrink:0;display:grid;place-items:center;font:600 14px var(--s)}
+.m.assistant .av{background:linear-gradient(135deg,var(--gold2),#c9822b);color:#1a1204}.m.user .av{background:var(--raise);border:1px solid var(--line);color:var(--teal)}
+.body{flex:1;min-width:0}.m.user .body{background:var(--raise);border:1px solid var(--line);border-radius:var(--r);padding:10px 14px}
+.md>:first-child{margin-top:0}.md>:last-child{margin-bottom:0}.md p,.md ul,.md ol{margin:.6em 0}.md a{color:var(--teal)}
+.md pre{background:#0a0c12!important;border:1px solid var(--line);border-radius:12px;padding:12px 14px;overflow:auto}.md code{font:13px ui-monospace,Menlo,monospace}
+.md :not(pre)>code{background:var(--raise);padding:2px 6px;border-radius:6px}.md table{border-collapse:collapse;display:block;overflow:auto}.md th,.md td{border:1px solid var(--line);padding:6px 10px}
+.md blockquote{margin:.6em 0;padding-left:12px;border-left:3px solid var(--gold);color:var(--mute)}
+.plain{white-space:pre-wrap}.err{color:var(--bad);border:1px solid #5a2a2a;background:#2a1417;border-radius:10px;padding:10px 12px}
+.acts{display:flex;gap:4px;margin-top:6px;opacity:0;transition:.2s}.m:hover .acts,.acts.show{opacity:1}
+.acts button{color:var(--mute);font-size:12px;padding:3px 8px;border-radius:7px}.acts button:hover{background:var(--raise);color:var(--gold2)}
+.thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}.thumbs img{height:84px;border-radius:10px;border:1px solid var(--line)}
+.chip{display:inline-flex;gap:6px;align-items:center;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:3px 8px;font-size:12.5px;color:var(--mute)}
+.dots span{display:inline-block;width:6px;height:6px;margin-right:4px;border-radius:50%;background:var(--gold);animation:b 1s infinite}.dots span:nth-child(2){animation-delay:.15s}.dots span:nth-child(3){animation-delay:.3s}
+@keyframes b{50%{transform:translateY(-4px);opacity:.4}}
+footer{padding:8px 18px calc(14px + env(safe-area-inset-bottom))}
+.modes{display:flex;gap:6px;margin:0 auto 8px;max-width:780px;overflow:auto}.modes button{white-space:nowrap;border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-size:13px;color:var(--mute)}.modes button.on{background:#2a2112;border-color:#5c4723;color:var(--gold2)}
+.box{max-width:780px;margin:0 auto;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:10px;transition:border-color .2s,box-shadow .2s}.box:focus-within{border-color:#5c4723;box-shadow:0 0 0 4px #e8b04b14}.box.drag{border-color:var(--teal)}
+#atts{display:flex;gap:8px;flex-wrap:wrap}#atts:not(:empty){margin-bottom:8px}
+.at{position:relative}.at img{height:60px;border-radius:9px;border:1px solid var(--line);display:block}.at .x{position:absolute;top:-6px;right:-6px;background:var(--raise);border:1px solid var(--line);border-radius:50%;width:20px;height:20px;line-height:17px;font-size:13px;color:var(--mute)}
+.row{display:flex;align-items:flex-end;gap:6px}
+textarea{flex:1;background:none;border:0;outline:0;resize:none;max-height:200px;padding:8px 6px;line-height:1.5}
+.rb{width:38px;height:38px;border-radius:11px;color:var(--mute);display:grid;place-items:center;font-size:17px;transition:.2s}.rb:hover{background:var(--raise);color:var(--gold2)}.rb.rec{color:var(--bad);animation:b 1s infinite}
+#send{background:linear-gradient(135deg,var(--gold2),var(--gold));color:#1a1204;font-weight:700}#send:hover{filter:brightness(1.1)}
+.hint{text-align:center;font-size:11.5px;color:var(--mute);margin-top:8px}
+#pop{position:absolute;right:18px;top:62px;width:290px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;display:none;flex-direction:column;gap:10px;z-index:20;box-shadow:0 20px 50px #000a}
+#pop.open{display:flex}#pop label{font-size:12.5px;color:var(--mute);display:flex;flex-direction:column;gap:4px}#pop .sel{max-width:none}
+.sw{flex-direction:row!important;justify-content:space-between;align-items:center}
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--raise);border:1px solid var(--line);padding:8px 14px;border-radius:10px;z-index:30;font-size:13px}
+@media(max-width:760px){aside{position:fixed;inset:0 auto 0 0;z-index:25;transform:translateX(-100%)}aside.open{transform:none;box-shadow:20px 0 60px #000b}.menu{display:block}header{padding:10px 12px}.sel{max-width:44vw}.acts{opacity:1}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style></head><body>
+<aside id="side">
+  <div class="logo"><i>S</i>StudyBuddy</div>
+  <button class="new" id="newBtn">New chat</button>
+  <div id="list"></div>
+  <div class="foot" id="status"></div>
+</aside>
+<main>
+  <header>
+    <button class="menu" id="menu" aria-label="Open chats">☰</button>
+    <select class="sel" id="prov" aria-label="Provider"></select>
+    <select class="sel" id="model" aria-label="Model"></select>
+    <input class="sel" id="custom" placeholder="Model ID" aria-label="Custom model ID">
+    <span class="grow"></span>
+    <button class="ibtn" id="gear">Voice</button>
+  </header>
+  <div id="pop">
+    <label>Voice (ElevenLabs)<select class="sel" id="voice"></select></label>
+    <label>Custom voice ID<input class="sel" id="voiceId" placeholder="Paste a voice ID (optional)"></label>
+    <label class="sw">Read replies aloud automatically<input type="checkbox" id="auto"></label>
+  </div>
+  <div id="msgs"><div class="wrap" id="wrap"></div></div>
+  <footer>
+    <div class="modes" id="modes"></div>
+    <div class="box" id="box">
+      <div id="atts"></div>
+      <div class="row">
+        <button class="rb" id="attach" title="Attach images, PDFs, or text files" aria-label="Attach file">＋</button>
+        <textarea id="in" rows="1" placeholder="Ask anything, or attach your notes…"></textarea>
+        <button class="rb" id="mic" title="Dictate" aria-label="Dictate">🎙</button>
+        <button class="rb" id="send" aria-label="Send">➤</button>
+      </div>
+      <input type="file" id="file" multiple hidden accept="image/*,.pdf,.txt,.md,.csv,.json,.js,.ts,.py,.java,.c,.cpp,.html,.css,.xml,.yml,.yaml,.log,.tex">
+    </div>
+    <div class="hint">AI can make mistakes. Check important facts.</div>
+  </footer>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const MODES={chat:['Chat',''],explain:['Explain simply','Explain concepts step by step in plain language with a short example. Check understanding at the end with one question.'],quiz:['Quiz me','Quiz the student. Ask ONE question at a time, wait for the answer, then give feedback and the next question.'],sum:['Summarize','Summarize the material into clear key points, then list the 5 most important things to remember.'],cards:['Flashcards','Turn the material into flashcards formatted as "**Q:** ... / **A:** ...".']};
+const FB={openrouter:['openai/gpt-4o-mini','google/gemini-2.0-flash-001','meta-llama/llama-3.3-70b-instruct'],nvidia:['meta/llama-3.3-70b-instruct','nvidia/llama-3.1-nemotron-70b-instruct'],gemini:['gemini-2.5-flash','gemini-2.5-pro','gemini-2.0-flash']};
+const BASE='You are StudyBuddy, a friendly, accurate study tutor. Be clear and concise, use markdown, and use examples.';
+const store={get:(k,d)=>{try{return JSON.parse(localStorage.getItem(k))??d}catch{return d}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch{}}};
+const S={chats:store.get('sb.chats',[]),cur:null,cfg:null,models:{},st:store.get('sb.set',{prov:'openrouter',model:'',voice:'',voiceId:'',auto:false,mode:'chat'}),atts:[],busy:false,ctrl:null,audio:null};
+const save=()=>{store.set('sb.chats',S.chats.map(c=>({...c,msgs:c.msgs.map(({imgs,...m})=>({...m,img:imgs?.length||m.img||0}))})));store.set('sb.set',S.st)};
+const toast=t=>{const e=document.createElement('div');e.className='toast';e.textContent=t;document.body.appendChild(e);setTimeout(()=>e.remove(),2800)};
+const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function md(t){try{if(window.marked&&window.DOMPurify){const h=DOMPurify.sanitize(marked.parse(t,{breaks:true}));const d=document.createElement('div');d.innerHTML=h;d.querySelectorAll('a').forEach(a=>{a.target='_blank';a.rel='noopener'});if(window.hljs)d.querySelectorAll('pre code').forEach(b=>hljs.highlightElement(b));return d.innerHTML}}catch{}return '<div class="plain">'+esc(t)+'</div>'}
+
+/* ---------- setup ---------- */
+async function init(){
+  try{S.cfg=await fetch('/api/config').then(r=>{if(!r.ok)throw 0;return r.json()})}catch{S.cfg={providers:{},voice:false};S.down=true}
+  try{S.models=await fetch('/api/models').then(r=>r.json())}catch{S.models={}}
+  S.nokeys=!S.down&&!Object.values(S.cfg.providers).some(p=>p.ok);
+  const ok=Object.entries(S.cfg.providers).filter(([,p])=>p.ok);
+  $('prov').innerHTML=ok.map(([k,p])=>`<option value="${k}">${p.name}</option>`).join('')||'<option>No keys set</option>';
+  if(!ok.find(([k])=>k===S.st.prov)&&ok.length)S.st.prov=ok[0][0];
+  $('prov').value=S.st.prov;fillModels();
+  $('status').textContent=S.down?'Server not reachable':ok.length?`${ok.length} provider${ok.length>1?'s':''} connected${S.cfg.voice?' · voice on':''}`:'Add API keys to .env';
+  $('modes').innerHTML=Object.entries(MODES).map(([k,[n]])=>`<button data-m="${k}" class="${S.st.mode===k?'on':''}">${n}</button>`).join('');
+  $('auto').checked=S.st.auto;$('voiceId').value=S.st.voiceId||'';
+  if(S.cfg.voice)fetch('/api/voices').then(r=>r.json()).then(v=>{$('voice').innerHTML=v.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join('');$('voice').value=S.st.voice||v[0]?.id;S.st.voice=$('voice').value}).catch(()=>{});
+  else{$('gear').style.display='none'}
+  if(!S.chats.length)newChat();else openChat(S.chats[0].id);
+}
+function fillModels(){
+  const list=(S.models[S.st.prov]?.length?S.models[S.st.prov]:FB[S.st.prov])||[];
+  $('model').innerHTML=list.map(m=>`<option>${esc(m)}</option>`).join('')+'<option value="__c">Custom model ID…</option>';
+  const m=list.includes(S.st.model)?S.st.model:(S.st.model&&!list.includes(S.st.model)&&S.st.custom?'__c':list[0]);
+  $('model').value=m||'__c';$('custom').style.display=$('model').value==='__c'?'block':'none';
+  if($('model').value==='__c')$('custom').value=S.st.model||'';else S.st.model=$('model').value;
+}
+const curModel=()=>$('model').value==='__c'?$('custom').value.trim():$('model').value;
+$('prov').onchange=()=>{S.st.prov=$('prov').value;S.st.model='';S.st.custom=false;fillModels();save()};
+$('model').onchange=()=>{S.st.custom=$('model').value==='__c';$('custom').style.display=S.st.custom?'block':'none';if(!S.st.custom)S.st.model=$('model').value;save()};
+$('custom').oninput=()=>{S.st.model=$('custom').value.trim();save()};
+$('gear').onclick=()=>$('pop').classList.toggle('open');
+$('voice').onchange=()=>{S.st.voice=$('voice').value;save()};$('voiceId').oninput=()=>{S.st.voiceId=$('voiceId').value.trim();save()};$('auto').onchange=()=>{S.st.auto=$('auto').checked;save()};
+$('modes').onclick=e=>{const b=e.target.closest('button');if(!b)return;S.st.mode=b.dataset.m;[...$('modes').children].forEach(x=>x.classList.toggle('on',x===b));save()};
+$('menu').onclick=()=>$('side').classList.toggle('open');
+
+/* ---------- chats ---------- */
+const chat=()=>S.chats.find(c=>c.id===S.cur);
+function newChat(){const c={id:Date.now().toString(36),title:'New chat',msgs:[]};S.chats.unshift(c);openChat(c.id)}
+function openChat(id){S.cur=id;$('side').classList.remove('open');renderList();renderMsgs()}
+$('newBtn').onclick=()=>{if(chat()?.msgs.length===0){$('in').focus();return}newChat()};
+function renderList(){$('list').innerHTML='';S.chats.forEach(c=>{const d=document.createElement('div');d.className='it'+(c.id===S.cur?' on':'');d.innerHTML=`<span>${esc(c.title)}</span><button aria-label="Delete chat">✕</button>`;d.onclick=()=>openChat(c.id);d.querySelector('button').onclick=e=>{e.stopPropagation();S.chats=S.chats.filter(x=>x.id!==c.id);if(!S.chats.length)newChat();else if(S.cur===c.id)openChat(S.chats[0].id);else renderList();save()};$('list').appendChild(d)})}
+function renderMsgs(){
+  const w=$('wrap');w.innerHTML='';const c=chat();
+  if(!c.msgs.length){w.innerHTML=`<div class="hero">${S.down?'<div class="err" style="margin-bottom:18px">Can’t reach the StudyBuddy server. Open your deployed link, or run <b>node server.js</b> and visit localhost:3000. Opening index.html directly won’t work.</div>':S.nokeys?'<div class="err" style="margin-bottom:18px">No API keys found on the server. Add them as environment variables on your host, then redeploy.</div>':''}<h1>What are we studying today?</h1><p>Ask a question, paste your notes, or attach a photo of a textbook page and I'll help you learn it.</p><div class="starts"></div></div>`;
+    ['Explain photosynthesis like I’m 12','Quiz me on the French Revolution','Make a study plan for my exam in 2 weeks','Help me understand derivatives'].forEach(t=>{const b=document.createElement('button');b.textContent=t;b.onclick=()=>{$('in').value=t;send()};w.querySelector('.starts').appendChild(b)});return}
+  c.msgs.forEach(addMsg);scrollDown();
+}
+function addMsg(m){
+  const d=document.createElement('div');d.className='m '+m.role;
+  d.innerHTML=`<div class="av">${m.role==='user'?'Y':'S'}</div><div class="body"></div>`;$('wrap').appendChild(d);paint(d,m);return d;
+}
+function paint(d,m){
+  const b=d.querySelector('.body');let h='';
+  if(m.imgs?.length)h+='<div class="thumbs">'+m.imgs.map(u=>`<img src="${u}" alt="attachment">`).join('')+'</div>';
+  else if(m.img)h+=`<div class="thumbs"><span class="chip">🖼 ${m.img} image${m.img>1?'s':''} (not stored)</span></div>`;
+  if(m.files?.length)h+='<div class="thumbs">'+m.files.map(f=>`<span class="chip">📄 ${esc(f)}</span>`).join('')+'</div>';
+  if(m.error)h+=`<div class="err">${esc(m.error)}</div>`;
+  else if(m.role==='assistant'&&!m.content)h+='<div class="dots"><span></span><span></span><span></span></div>';
+  else h+=m.role==='user'?'<div class="plain">'+esc(m.content)+'</div>':'<div class="md">'+md(m.content)+'</div>';
+  if(m.role==='assistant'&&m.content&&!m.streaming)h+='<div class="acts"><button data-a="copy">Copy</button>'+(S.cfg?.voice?'<button data-a="speak">Listen</button>':'')+'</div>';
+  b.innerHTML=h;
+  b.querySelector('[data-a=copy]')?.addEventListener('click',()=>navigator.clipboard.writeText(m.content).then(()=>toast('Copied')));
+  b.querySelector('[data-a=speak]')?.addEventListener('click',e=>speak(m.content,e.target));
+}
+const scrollDown=()=>{const e=$('msgs');e.scrollTop=e.scrollHeight};
+
+/* ---------- send ---------- */
+async function send(){
+  if(S.busy){S.ctrl?.abort();return}
+  const text=$('in').value.trim(),c=chat();if(!text&&!S.atts.length)return;
+  if(S.down)return toast('Server not reachable. Use the deployed link.');
+  const model=curModel()||(S.models[S.st.prov]?.[0])||FB[S.st.prov]?.[0];if(!model)return toast('Pick a provider first');
+  let extra='';const imgs=[],files=[];
+  S.atts.forEach(a=>{if(a.img)imgs.push(a.img);else{files.push(a.name);extra+=`\n\n[Attached file: ${a.name}]\n${a.text}`}});
+  const um={role:'user',content:text||'Please review the attached material.',imgs,files,extra};
+  c.msgs.push(um);if(c.title==='New chat')c.title=(text||files[0]||'Image').slice(0,40);
+  S.atts=[];renderAtts();$('in').value='';grow();
+  if(c.msgs.length===1)renderMsgs();else addMsg(um);
+  const am={role:'assistant',content:'',streaming:true};c.msgs.push(am);const el=addMsg(am);renderList();scrollDown();
+  S.busy=true;$('send').textContent='■';S.ctrl=new AbortController();
+  const sys=BASE+(MODES[S.st.mode][1]?'\n'+MODES[S.st.mode][1]:'');
+  const api=[{role:'system',content:sys},...c.msgs.slice(0,-1).filter(m=>!m.error).map(m=>{
+    const t=m.content+(m.extra||'');
+    return m.imgs?.length?{role:m.role,content:[{type:'text',text:t},...m.imgs.map(u=>({type:'image_url',image_url:{url:u}}))]}:{role:m.role,content:t}})];
+  const run=async mod=>{
+    const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},signal:S.ctrl.signal,body:JSON.stringify({provider:S.st.prov,model:mod,messages:api})});
+    if(!r.ok){const e=await r.json().catch(()=>({}));throw Object.assign(new Error(e.error||'Request failed ('+r.status+')'),{status:r.status})}
+    const rd=r.body.getReader(),dec=new TextDecoder();let buf='';
+    for(;;){const{done,value}=await rd.read();if(done)break;buf+=dec.decode(value,{stream:true});let i;
+      while((i=buf.indexOf('\n'))>=0){const line=buf.slice(0,i).trim();buf=buf.slice(i+1);if(!line.startsWith('data:'))continue;const d=line.slice(5).trim();if(d==='[DONE]')continue;
+        try{const j=JSON.parse(d);if(j.error)throw new Error(j.error.message||'Model error');const t=j.choices?.[0]?.delta?.content;if(t){am.content+=t;paint(el,am);scrollDown()}}catch(e){if(!(e instanceof SyntaxError))throw e}}}
+    if(!am.content)throw new Error('The model returned an empty reply.');
+  };
+  const pool=(S.models[S.st.prov]?.length?S.models[S.st.prov]:FB[S.st.prov])||[];
+  const cands=S.st.custom?[model]:[model,...pool.filter(x=>x!==model).slice(0,5)];
+  try{
+    let last=null;
+    for(const mod of cands){
+      try{am.content='';await run(mod);last=null;if(mod!==model){S.st.model=mod;$('model').value=mod;toast('Switched to '+mod+' (the first model was unavailable)')}break}
+      catch(e){last=e;if(e.name==='AbortError'||!/not found|no longer available|not supported|unavailable|does not exist|deprecated/i.test(e.message)&&e.status!==404)break}
+    }
+    if(last)throw last;
+  }catch(e){if(e.name==='AbortError'){if(!am.content)c.msgs.pop(),el.remove()}else{am.error=/402|insufficient credits/i.test(e.message)?'This OpenRouter account has no credits. Pick a model ending in :free, or add credits at openrouter.ai/settings/credits.':e.message;if(/image|vision|multimodal/i.test(e.message)&&um.imgs.length)am.error+=' (This model may not support images. Pick a vision model.)'}}
+  am.streaming=false;paint(el,am);S.busy=false;$('send').textContent='➤';save();
+  if(am.content&&!am.error&&S.st.auto)speak(am.content);
+}
+$('send').onclick=send;
+$('in').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey&&!/Mobi|Android/i.test(navigator.userAgent)){e.preventDefault();send()}});
+const grow=()=>{const t=$('in');t.style.height='auto';t.style.height=Math.min(t.scrollHeight,200)+'px'};$('in').oninput=grow;
+
+/* ---------- voice out (ElevenLabs) ---------- */
+async function speak(text,btn){
+  if(S.audio){S.audio.pause();S.audio=null;if(btn&&btn.textContent==='Stop'){btn.textContent='Listen';return}}
+  const clean=text.replace(/```[\s\S]*?```/g,' code block ').replace(/[*_#>`~|]/g,'').replace(/\[([^\]]+)\]\([^)]+\)/g,'$1').slice(0,3500);
+  const old=btn?.textContent;if(btn)btn.textContent='Loading…';
+  try{
+    const r=await fetch('/api/tts',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:clean,voiceId:S.st.voiceId||S.st.voice})});
+    if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.error||'Voice failed')}
+    const a=new Audio(URL.createObjectURL(await r.blob()));S.audio=a;if(btn)btn.textContent='Stop';
+    a.onended=()=>{if(btn)btn.textContent='Listen';S.audio=null};await a.play();
+  }catch(e){toast(e.message);if(btn)btn.textContent=old==='Loading…'?'Listen':old}
+}
+
+/* ---------- dictation ---------- */
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;let rec;
+$('mic').onclick=()=>{
+  if(!SR)return toast('Dictation is not supported in this browser');
+  if(rec){rec.stop();return}
+  rec=new SR();rec.interimResults=true;rec.lang=navigator.language||'en-US';const base=$('in').value;
+  rec.onresult=e=>{$('in').value=(base+' '+[...e.results].map(r=>r[0].transcript).join('')).trim();grow()};
+  rec.onend=()=>{rec=null;$('mic').classList.remove('rec')};rec.onerror=()=>{rec=null;$('mic').classList.remove('rec')};
+  rec.start();$('mic').classList.add('rec');
+};
+
+/* ---------- attachments ---------- */
+const renderAtts=()=>{$('atts').innerHTML='';S.atts.forEach((a,i)=>{const d=document.createElement('div');d.className='at';d.innerHTML=(a.img?`<img src="${a.img}" alt="">`:`<span class="chip">📄 ${esc(a.name)}</span>`)+'<button class="x" aria-label="Remove">×</button>';d.querySelector('.x').onclick=()=>{S.atts.splice(i,1);renderAtts()};$('atts').appendChild(d)})};
+function shrink(f){return new Promise((ok,no)=>{const u=URL.createObjectURL(f),im=new Image();im.onload=()=>{const k=Math.min(1,1600/Math.max(im.width,im.height)),cv=document.createElement('canvas');cv.width=im.width*k;cv.height=im.height*k;const x=cv.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,cv.width,cv.height);x.drawImage(im,0,0,cv.width,cv.height);URL.revokeObjectURL(u);ok(cv.toDataURL('image/jpeg',.85))};im.onerror=()=>no(new Error('Cannot read image '+f.name));im.src=u})}
+async function pdfText(f){
+  if(!window.pdfjsLib)throw new Error('PDF reader failed to load. Check your connection.');
+  pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  const p=await pdfjsLib.getDocument({data:await f.arrayBuffer()}).promise;let t='';
+  for(let i=1;i<=Math.min(p.numPages,60);i++){t+=(await(await p.getPage(i)).getTextContent()).items.map(x=>x.str).join(' ')+'\n'}
+  if(!t.trim())throw new Error(f.name+' looks scanned. Attach it as photos instead.');return t;
+}
+async function addFiles(list){
+  for(const f of list){
+    try{
+      if(S.atts.length>=8){toast('Max 8 attachments');break}
+      if(f.type.startsWith('image/'))S.atts.push({name:f.name,img:await shrink(f)});
+      else if(f.size>10e6)toast(f.name+' is over 10 MB');
+      else{const t=/pdf/i.test(f.type)||/\.pdf$/i.test(f.name)?await pdfText(f):await f.text();S.atts.push({name:f.name,text:t.slice(0,60000)})}
+    }catch(e){toast(e.message)}
+  }renderAtts();
+}
+$('attach').onclick=()=>$('file').click();$('file').onchange=e=>{addFiles([...e.target.files]);e.target.value=''};
+$('in').addEventListener('paste',e=>{const f=[...(e.clipboardData?.files||[])];if(f.length){e.preventDefault();addFiles(f)}});
+['dragover','dragenter'].forEach(t=>$('box').addEventListener(t,e=>{e.preventDefault();$('box').classList.add('drag')}));
+['dragleave','drop'].forEach(t=>$('box').addEventListener(t,e=>{e.preventDefault();$('box').classList.remove('drag');if(t==='drop')addFiles([...e.dataTransfer.files])}));
+document.addEventListener('click',e=>{if(!e.target.closest('#pop,#gear'))$('pop').classList.remove('open')});
+window.addEventListener('load',init);
+</script></body></html>
